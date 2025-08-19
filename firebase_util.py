@@ -4,17 +4,16 @@ from firebase_admin import credentials, firestore
 import os
 import json
 
-# ✅ Read from environment variable
 firebase_config = os.environ.get("FIREBASE_CONFIG")
-
-# ✅ Convert JSON string to dict
 firebase_dict = json.loads(firebase_config)
 
-# ✅ Initialize Firebase using the in-memory dictionary
-cred = credentials.Certificate(firebase_dict)
-firebase_admin.initialize_app(cred)
+# ✅ Fix escaped newline issue in private_key
+if "private_key" in firebase_dict:
+    firebase_dict["private_key"] = firebase_dict["private_key"].replace("\\n", "\n")
 
-# ✅ Firestore client
+cred = credentials.Certificate(firebase_dict)
+
+# Firestore client
 db = firestore.client()
 
 
